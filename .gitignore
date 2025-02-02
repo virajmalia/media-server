@@ -1,2 +1,4 @@
 plexmediaserver/
 immich/
+ssl/
+nginx.conf

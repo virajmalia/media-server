@@ -6,7 +6,7 @@
 # The compose file on main may not be compatible with the latest release.
 #
 
-name: immich
+name: media-server
 
 services:
   immich-server:
@@ -86,23 +86,20 @@ services:
     restart: always
 
   plex:
-    image: plexinc/pms-docker:latest # Set specific: plexinc/pms-docker:1.40.2.8395-c67dce28e
+    image: plexinc/pms-docker:${PLEX_VERSION:-latest}
     container_name: plex
-    network_mode: host # Change this to 'bridge' to define ports, example ports below
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=America/Vancouver
-      - PLEX_CLAIM=claim-5sRs4VoorLigR23Hn-Fb # Uncomment this to setup Plex server, get your claim code from here - https://www.plex.tv/claim/
+      - PLEX_CLAIM=${PLEX_CLAIM_TOKEN}
     volumes:
       - /etc/localtime:/etc/localtime:ro # Sync the container's time to the host's time
       - ./plexmediaserver:/config # Plex server application data is stored in a folder called 'plexmediaserver' in the same directory as the docker-compose.yaml file
-      - ${PLEX_BASE}/Shows:/mnt/tv
-      - ${PLEX_BASE}/Movies:/mnt/movies
     restart: unless-stopped
 
   nginx:
-    image: nginx:latest
+    image: nginx:${NGINX_VERSION:-latest}
     ports:
       - "80:80"
       - "443:443"
