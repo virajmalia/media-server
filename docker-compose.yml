@@ -90,6 +90,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro # Sync the container's time to the host's time
       - ./plexmediaserver:/config # Plex server application data is stored in a folder called 'plexmediaserver' in the same directory as the docker-compose.yaml file
+      - ./ssl:/data/plex-ssl # Map SSL certificate and key files to the container
     restart: unless-stopped
 
   nginx:
