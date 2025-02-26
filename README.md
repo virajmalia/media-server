@@ -52,6 +52,8 @@ This media server is designed to run a variety of services, including:
 * Ports:
 	+ `80:80`
 	+ `443:443`
+* Nginx reverse proxy is setup to expose the media services outside the home network using the public IP of the host. By default this is setup using `http` which is insecure.
+* There are many ways to setup `SSL/https`. Place SSL `key.pem` and `cert.pem` in `./ssl` folder. If you own a custom domain, cloudflare is the simplest and most secure option if setup correctly; even better if a tunnel is used.
 
 ## Volumes
 
@@ -79,7 +81,14 @@ docker-compose logs --follow <container_name>
 
 Replace `<container_name>` with the name of the container you want to view the logs for.
 
+## Hardware Acceleration
+
+- The `docker-compose.yml` and the `hwaccel.*.yml` are configured to enable hardware acceleration using `openvino` for Intel CPUs, and `cuda` for nvidia GPUs, for Immich.
+- HW acceleration in Plex can be enabled from the web interface.
+
 ## Notes
 
+* Copy `sample-configs/.env` into the root of this project (same location as `docker-compose.yml`).
+* Update all placeholder variables with your own values.
 * Make sure to replace `postgres` with a secure password for PostgreSQL.
-* Update `PLEX_CLAIM_TOKEN` with your own Plex server claim token.
+* For individual services, refer to their docker-compose documentations for more options.
