@@ -70,20 +70,27 @@ The following volumes are mounted:
 To run the media server, navigate to the `media-server` directory in your terminal and run the following command:
 
 ```bash
-docker-compose up -d
+sudo docker compose up -d
 ```
 
 This will start all containers in detached mode. You can view the logs for each container using the following command:
 
 ```bash
-docker-compose logs --follow <container_name>
+sudo docker compose logs --follow <container_name>
 ```
 
 Replace `<container_name>` with the name of the container you want to view the logs for.
 
+To stop the media server, run the command:
+
+```bash
+sudo docker compose down
+```
+
 ## Hardware Acceleration
 
-- The `docker-compose.yml` and the `hwaccel.*.yml` are configured to enable hardware acceleration using `openvino` for Intel CPUs, and `cuda` for nvidia GPUs, for Immich.
+- The `hwaccel.*.yml` files contain docker configurations for hardware acceleration using `openvino` for Intel CPUs, and `cuda` for nvidia GPUs, for Immich.
+- The `docker-compose.yml` uses `openvino` by default.
 - HW acceleration in Plex can be enabled from the web interface.
 
 ## Notes
