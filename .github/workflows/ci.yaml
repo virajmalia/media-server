@@ -20,7 +20,7 @@ jobs:
 
     - name: Start Stack
       run: |
-        docker compose up --env-file ./sample-configs/.env -d
+        docker compose --env-file ./sample-configs/.env up -d
         sleep 15  # adjust for slowest service startup
 
     - name: Show Container Status
