@@ -1,0 +1,64 @@
+name: media-server CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    env:
+      IMMICH_VERSION: v1.138.1     # override with matrix/include for branches/tags
+      PLEX_VERSION: 1.41.5.9522-a96edc606
+      NGINX_VERSION: 1.27.4
+      PLEX_CLAIM_TOKEN: dummy-claim-token
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: immich
+      UPLOAD_LOCATION: ./data/immich/uploads
+      DB_DATA_LOCATION: ./data/immich/postgres
+      EXTERNAL_LIB: ./data/immich/external
+      SETTINGS_ENCRYPTION_KEY: dummykey
+      DUPLICATI__WEBSERVICE_PASSWORD: dummypass
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Compose
+      run: |
+        docker compose --version
+
+    - name: Pull and Build Images
+      run: |
+        docker compose pull
+        docker compose build
+
+    - name: Start Stack
+      run: |
+        docker compose up -d
+        sleep 15  # adjust for slowest service startup
+
+    - name: Show Container Status
+      run: |
+        docker compose ps
+
+    - name: Health Check All Services
+      run: |
+        # Check if any container is unhealthy
+        unhealthy=$(docker ps --filter 'health=unhealthy' --format '{{.Names}}')
+        if [ ! -z "$unhealthy" ]; then
+          echo "Unhealthy container(s): $unhealthy"
+          exit 1
+        fi
+
+    - name: Container Logs (on failure)
+      if: failure()
+      run: |
+        docker compose logs
+
+    - name: Tear Down Stack
+      run: |
+        docker compose down -v --remove-orphans
