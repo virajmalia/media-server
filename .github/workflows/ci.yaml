@@ -20,6 +20,10 @@ jobs:
 
     - name: Start Stack
       run: |
+        # Create necessary directories
+        mkdir -p ./data/immich ./data/plexmediaserver ./data/ssl ./data/duplicati
+        # Use sample config files for testing
+        sed -i s@./data/immich.conf@./sample-configs/immich.conf@g docker-compose.yml
         docker compose --env-file ./sample-configs/.env up -d
         sleep 15  # adjust for slowest service startup
 
