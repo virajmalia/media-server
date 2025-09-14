@@ -23,7 +23,7 @@ jobs:
         # Create necessary directories
         mkdir -p ./data/immich ./data/plexmediaserver ./data/ssl ./data/duplicati
         # Use sample config files for testing
-        sed -i s@./data/immich.conf@./sample-configs/immich.conf@g docker-compose.yml
+        sed -i s@./data/immich.conf@./sample-configs/immich.conf@g compose.yaml
         cp sample-configs/.env .env
         docker compose up -d
         sleep 15  # adjust for slowest service startup
