@@ -112,9 +112,11 @@ services:
     restart: always
     volumes:
       - ./data/immich.conf:/etc/nginx/conf.d/immich.conf
+      - ./data/jellyfin.conf:/etc/nginx/conf.d/jellyfin.conf
       - ./data/ssl:/etc/nginx/ssl
     depends_on:
       - immich-server
+      - jellyfin
   jellyfin:
     restart: unless-stopped
     image: jellyfin/jellyfin
