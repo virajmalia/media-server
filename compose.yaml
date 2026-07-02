@@ -51,7 +51,7 @@ services:
       disable: false
   redis:
     container_name: immich_redis
-    image: docker.io/valkey/valkey:9@sha256:546304417feac0874c3dd576e0952c6bb8f06bb4093ea0c9ca303c73cf458f63
+    image: docker.io/valkey/valkey:9@sha256:3b55fbaa0cd93cf0d9d961f405e4dfcc70efe325e2d84da207a0a8e6d8fde4f9
     healthcheck:
       test: redis-cli ping || exit 1
     restart: always
@@ -67,6 +67,8 @@ services:
       - ${DB_DATA_LOCATION}:/var/lib/postgresql/data
     shm_size: 128mb
     restart: always
+    healthcheck:
+      disable: false
   duplicati:
     image: lscr.io/linuxserver/duplicati:latest
     container_name: duplicati
@@ -113,6 +115,24 @@ services:
       - ./data/ssl:/etc/nginx/ssl
     depends_on:
       - immich-server
+  jellyfin:
+    restart: unless-stopped
+    image: jellyfin/jellyfin
+    ports:
+      - 8096:8096/tcp
+      - 7359:7359/udp
+    volumes:
+      - ./data/jellyfin/config:/config
+      - ./data/jellyfin/cache:/cache
+      - type: bind
+        source: ${PLEX_EXT_LIB}
+        target: /media
+      - type: bind
+        source: /path/to/fonts
+        target: /usr/local/share/fonts/custom
+        read_only: true
+    extra_hosts:
+      - host.docker.internal:host-gateway
 volumes:
-  model-cache: null
+  model-cache:
 networks: {}
