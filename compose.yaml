@@ -69,6 +69,25 @@ services:
     restart: always
     healthcheck:
       disable: false
+  jellyfin:
+    container_name: jellyfin
+    restart: unless-stopped
+    image: jellyfin/jellyfin
+    ports:
+      - 8096:8096/tcp
+      - 7359:7359/udp
+    volumes:
+      - ./data/jellyfin/config:/config
+      - ./data/jellyfin/cache:/cache
+      - type: bind
+        source: ${STREAM_EXT_LIB}
+        target: /media
+      - type: bind
+        source: /path/to/fonts
+        target: /usr/local/share/fonts/custom
+        read_only: true
+    extra_hosts:
+      - host.docker.internal:host-gateway
   duplicati:
     image: lscr.io/linuxserver/duplicati:latest
     container_name: duplicati
@@ -102,25 +121,6 @@ services:
     depends_on:
       - immich-server
       - jellyfin
-  jellyfin:
-    container_name: jellyfin
-    restart: unless-stopped
-    image: jellyfin/jellyfin
-    ports:
-      - 8096:8096/tcp
-      - 7359:7359/udp
-    volumes:
-      - ./data/jellyfin/config:/config
-      - ./data/jellyfin/cache:/cache
-      - type: bind
-        source: ${STREAM_EXT_LIB}
-        target: /media
-      - type: bind
-        source: /path/to/fonts
-        target: /usr/local/share/fonts/custom
-        read_only: true
-    extra_hosts:
-      - host.docker.internal:host-gateway
 volumes:
   model-cache:
 networks: {}
