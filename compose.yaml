@@ -88,21 +88,6 @@ services:
     ports:
       - 8200:8200
     restart: unless-stopped
-  plex:
-    image: plexinc/pms-docker:${PLEX_VERSION:-latest}
-    container_name: plex
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Vancouver
-      - PLEX_CLAIM=${PLEX_CLAIM_TOKEN}
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ./data/plexmediaserver:/config
-      - ./data/ssl:/data/plex-ssl
-      - ${PLEX_EXT_LIB}:/data/TV
-    restart: unless-stopped
-    network_mode: host
   nginx:
     image: nginx:${NGINX_VERSION:-latest}
     container_name: nginx
@@ -118,6 +103,7 @@ services:
       - immich-server
       - jellyfin
   jellyfin:
+    container_name: jellyfin
     restart: unless-stopped
     image: jellyfin/jellyfin
     ports:
@@ -127,7 +113,7 @@ services:
       - ./data/jellyfin/config:/config
       - ./data/jellyfin/cache:/cache
       - type: bind
-        source: ${PLEX_EXT_LIB}
+        source: ${STREAM_EXT_LIB}
         target: /media
       - type: bind
         source: /path/to/fonts
