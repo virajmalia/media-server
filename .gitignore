@@ -1,6 +1,2 @@
-plexmediaserver/
-immich/
-ssl/
-/*.conf
 /.env
 data/
