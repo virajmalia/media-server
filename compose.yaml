@@ -51,7 +51,7 @@ services:
       disable: false
   redis:
     container_name: immich_redis
-    image: docker.io/valkey/valkey:9@sha256:3b55fbaa0cd93cf0d9d961f405e4dfcc70efe325e2d84da207a0a8e6d8fde4f9
+    image: docker.io/valkey/valkey:9@sha256:4963247afc4cd33c7d3b2d2816b9f7f8eeebab148d29056c2ca4d7cbc966f2d9
     healthcheck:
       test: redis-cli ping || exit 1
     restart: always
@@ -69,6 +69,25 @@ services:
     restart: always
     healthcheck:
       disable: false
+  jellyfin:
+    container_name: jellyfin
+    restart: unless-stopped
+    image: jellyfin/jellyfin
+    ports:
+      - 8096:8096/tcp
+      - 7359:7359/udp
+    volumes:
+      - ./data/jellyfin/config:/config
+      - ./data/jellyfin/cache:/cache
+      - type: bind
+        source: ${STREAM_EXT_LIB}
+        target: /media
+      - type: bind
+        source: /path/to/fonts
+        target: /usr/local/share/fonts/custom
+        read_only: true
+    extra_hosts:
+      - host.docker.internal:host-gateway
   duplicati:
     image: lscr.io/linuxserver/duplicati:latest
     container_name: duplicati
@@ -102,25 +121,6 @@ services:
     depends_on:
       - immich-server
       - jellyfin
-  jellyfin:
-    container_name: jellyfin
-    restart: unless-stopped
-    image: jellyfin/jellyfin
-    ports:
-      - 8096:8096/tcp
-      - 7359:7359/udp
-    volumes:
-      - ./data/jellyfin/config:/config
-      - ./data/jellyfin/cache:/cache
-      - type: bind
-        source: ${STREAM_EXT_LIB}
-        target: /media
-      - type: bind
-        source: /path/to/fonts
-        target: /usr/local/share/fonts/custom
-        read_only: true
-    extra_hosts:
-      - host.docker.internal:host-gateway
 volumes:
   model-cache:
 networks: {}
