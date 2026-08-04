@@ -69,6 +69,15 @@ services:
     restart: always
     healthcheck:
       disable: false
+  shoko-server:
+    container_name: shokofin
+    image: shokoanime/server:latest
+    volumes:
+      - ./data/shoko/config:/home/shoko/.shoko
+      - ${STREAM_EXT_LIB}/Anime:/media/Anime
+    ports:
+      - 8111:8111
+    restart: unless-stopped
   jellyfin:
     container_name: jellyfin
     restart: unless-stopped
@@ -80,8 +89,14 @@ services:
       - ./data/jellyfin/config:/config
       - ./data/jellyfin/cache:/cache
       - type: bind
-        source: ${STREAM_EXT_LIB}
-        target: /media
+        source: ${STREAM_EXT_LIB}/Anime
+        target: /media/Anime
+      - type: bind
+        source: ${STREAM_EXT_LIB}/Shows
+        target: /media/Shows
+      - type: bind
+        source: ${STREAM_EXT_LIB}/Movies
+        target: /media/Movies
       - type: bind
         source: /path/to/fonts
         target: /usr/local/share/fonts/custom
@@ -122,5 +137,5 @@ services:
       - immich-server
       - jellyfin
 volumes:
-  model-cache:
+  model-cache: null
 networks: {}
